@@ -1,0 +1,32 @@
+POST http://localhost:3000/users
+Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoibWFya0Bkb2UuY29tIiwiaWF0IjoxNzY3MTE0MjAwLCJleHAiOjE3NjcxMTc4MDAsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.5sZgqgC7o_AGtUanLefm0vSNwS3xcqqI_rDKQJa0zg0
+
+{
+  "firstName": "Mark",
+  "lastName": "Chima",
+  "email": "chima11christopher14@gmail.com",
+  "password": "Password123#2"
+}
+
+
+POST http://localhost:3000/users/create-many
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoibWFya0Bkb2UuY29tIiwiaWF0IjoxNzY2OTE0NzEwLCJleHAiOjE3NjY5MTgzMTAsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.wmAC8flY3EoZkLJtpAftSuiBrw3dvNwJxhXUdbHhKg4
+
+{
+"users": [
+    {
+      "firstName": "Mark",
+      "lastName": "Doe",
+      "email": "mark@doe.com",
+      "password": "Password123#"
+    },
+    {
+      "firstName": "Tom",
+      "lastName": "Doe",
+      "email": "tom@doe.com",
+      "password": "Password123#"
+    }
+  ]
+}

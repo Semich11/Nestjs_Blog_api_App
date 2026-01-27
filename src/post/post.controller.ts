@@ -1,64 +1,85 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
 } from '@nestjs/common';
-import { PostService } from './provider/post.service';
-import { CreatePostDto } from './dtos/create-post.dto';
+import { PostsService } from './providers/post.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreatePostDto } from './dtos/create-post.dto';
 import { PatchPostDto } from './dtos/patch-post.dto';
+import { GetPostsDto } from './dtos/get-posts.dto';
+import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
+import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import type { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
-@ApiTags('posts')
 @Controller('posts')
-export class PostController {
-  constructor(private readonly postService: PostService) {}
+@ApiTags('Posts')
+export class PostsController {
+  constructor(
+    /*
+     *  Injecting Posts Service
+     */
+    private readonly postsService: PostsService,
+  ) {}
 
-  @Get('{:userId}')
-  getPost(@Param('userId') userId: string) {
-    // console.log(userId)
-    return this.postService.findAll(userId);
-  }
+  /*
+   * GET localhost:3000/posts/:userId
+   */
 
-  @Post()
-  public createPost(@Body() createPostDto: CreatePostDto) {
-    console.log(createPostDto);
-  }
-
+  // @Get('{/:userId}')
+  // public getPosts(@Param('userId') userId: string) {
+  //   return this.postsService.findAll(userId);
+  // }
 
   @ApiOperation({
-    summary: 'Updates and existing blog post in the database.',
+    summary: 'Creates a new blog post',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'You get a 201 response if your post is created successfully',
+  })
+  @Post()
+  public createPost(
+  @Body() createPostDto: CreatePostDto, 
+  @ActiveUser() user: ActiveUserData
+) {
+  console.log(user); // user.sub is the author
+    console.log(user);
+    return this.postsService.create(createPostDto, user);
+  }
+
+
+
+
+  @Get('{/:userId}')
+  public getPosts(
+    @Param('userId') userId: string,
+    @Query() postQuery: GetPostsDto,
+  ) {
+    return this.postsService.findAll(postQuery, userId);
+  }
+
+  @ApiOperation({
+    summary: 'Updates an existing blog post',
   })
   @ApiResponse({
     status: 200,
-    description:
-      'You get a success 20o response if the post is updated successfully',
+    description: 'A 200 response if the post is updated successfully',
   })
   @Patch()
-  public updatePost(@Body() patchPostsDto: PatchPostDto) {
-    console.log(patchPostsDto);
+  public updatePost(@Body() patchPostDto: PatchPostDto) {
+    return this.postsService.update(patchPostDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.postService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.postService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-  //   return this.postService.update(+id, updatePostDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.postService.remove(+id);
-  // }
+  @Delete()
+  public deletePost(@Query('id', ParseIntPipe) id: number) {
+    return this.postsService.delete(id);
+  }
 }
